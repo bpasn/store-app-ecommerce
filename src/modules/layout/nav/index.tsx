@@ -1,6 +1,6 @@
 'use client';
 import { useStoreSideBar } from '@/lib/hooks/store-side-bar'
-import { Menu } from 'lucide-react'
+import { Menu, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
 
@@ -26,7 +26,7 @@ const Nav = () => {
                         </Link>
                     </div>
 
-                    <div className="">
+                    <div className="flex gap-4">
                         <div className="hidden sm:flex items-center gap-x-6 h-full">
                             {process.env.FEATURE_SEARCH_ENABLED && (
                                 <Link
@@ -57,6 +57,7 @@ const Nav = () => {
                                 </Link>
                             }
                         >
+                            <ShoppingCart />
                         </Suspense>
                     </div>
                 </nav>

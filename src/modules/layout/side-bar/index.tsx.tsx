@@ -1,7 +1,34 @@
 'use client';
+import IconLucide from '@/lib/hooks/icon-lucide';
 import { useStoreSideBar } from '@/lib/hooks/store-side-bar';
-import { cn } from '@/lib/utils';
+import { cn, EachElement } from '@/lib/utils';
+import { IconProps } from '@/types/icon';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React from 'react';
+
+
+
+interface MenuSideBar {
+    label: string;
+    href: string;
+    icon?: IconProps["name"];
+}
+const menubar: MenuSideBar[] = [
+    {
+        label: "Product",
+        href:"/",
+        icon:"ShoppingBag"
+    },
+    
+    {
+        label: "Category",
+        href:"/category",
+        icon:"Clipboard"
+    },
+
+    
+];
 const SideBar = () => {
     const sideBar = useStoreSideBar();
     React.useEffect(() => {
@@ -19,7 +46,9 @@ const SideBar = () => {
 
     const handleClick = () => {
         sideBar.setOpen(!open);
-    }
+    };
+
+    const pathname = usePathname();
     return (
         <>
             <div className={cn("fixed inset-0 bg-black transition-opacity", sideBar.open ? "opacity-50 z-30" : "opacity-0 pointer-events-none")
@@ -37,13 +66,20 @@ const SideBar = () => {
                 aria-label="Sidebar">
                 <div className="h-full overflow-y-auto ">
                     <div className='flex items-center border-b h-16 bg-[rgb(255,255,255)] justify-center'>
-                        <h1>Merchant Portal Logo</h1>
+                        <h1>Store</h1>
                     </div>
                     <ul>
-                        {/* <EachElement
-                            of={routes}
-                            render={(route, index) => <MenuItem key={index} route={route} />}
-                        /> */}
+                        <EachElement
+                           of={menubar}
+                           render={(item) => {
+                            return (
+                                <li className={`py-4 px-3 flex flex-row gap-3 items-center cursor-pointer hover:bg-gray-200 ${pathname === item.href ? "bg-gray-200" : ""}`}>
+                                    {item.icon && <IconLucide name={item.icon} />}
+                                    <Link href={item.href}>{item.label}</Link>
+                                </li>
+                            )
+                           }}
+                        />
                     </ul>
                 </div>
             </aside>

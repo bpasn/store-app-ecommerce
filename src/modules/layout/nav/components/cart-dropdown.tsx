@@ -1,70 +1,77 @@
-import Link from 'next/link'
-import { useParams, usePathname } from 'next/navigation'
-import React, { Fragment, useEffect, useRef, useState } from 'react'
-import { Popover, Transition } from '@headlessui/react';
+"use client";
+
+import { Popover, PopoverButton, Button as ButtonHeadlessui, PopoverPanel, Transition } from "@headlessui/react";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 type Props = {
-    cart: any[]
-}
+    cart: any[];
+};
 
 const CartDropdown = ({
     cart: cartState
 }: Props) => {
-    const [activeTimer, setActiveTimer] = useState<NodeJS.Timer | undefined>(
-        undefined
-    )
-    const [cartDropdownOpen, setCartDropdownOpen] = useState(false)
+    const [activeTimer, setActiveTimer] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-    const { countryCode } = useParams()
+    const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
 
-    const open = () => setCartDropdownOpen(true)
-    const close = () => setCartDropdownOpen(false)
 
-    const totalItems =
-        (cartState as any).items?.reduce((acc: any, item: any) => {
-            return acc + item.quantity
-        }, 0) || 0
+    const open = () => setCartDropdownOpen(true);
+    const close = () => setCartDropdownOpen(false);
 
-    const itemRef = useRef<number>(totalItems || 0)
+    const totalItems = 0;
+
+    const itemRef = useRef<number>(0);
 
     const timedOpen = () => {
-    }
+        open();
+
+        const timer = setTimeout(close, 5000);
+
+        setActiveTimer(timer);
+    };
 
     const openAndCancel = () => {
-    }
+        if (activeTimer) {
+            clearTimeout(activeTimer);
+        }
+        open();
+    };
 
     // Clean up the timer when the component unmounts
     useEffect(() => {
         return () => {
             if (activeTimer) {
-                // clearTimeout(activeTimer)
+                clearTimeout(activeTimer);
             }
-        }
-    }, [activeTimer])
+        };
+    }, [activeTimer]);
 
-    const pathname = usePathname()
+    const pathname = usePathname();
 
     // open cart dropdown when modifying the cart items, but only if we're not on the cart page
     useEffect(() => {
-        if (itemRef.current !== totalItems && !pathname.includes("/cart")) {
-            timedOpen()
+        if (itemRef.current !== 0 && !pathname.includes("/cart")) {
+            timedOpen();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [totalItems, itemRef.current])
+    }, [totalItems, itemRef.current]);
 
     return (
         <div
-            className="h-full z-50"
+            className="h-full z-70"
             onMouseEnter={openAndCancel}
             onMouseLeave={close}
         >
             <Popover className="relative h-full">
-                <Popover.Button className="h-full">
+                <PopoverButton className="h-full">
                     <Link
                         className="hover:text-ui-fg-base"
                         href="/cart"
                         data-testid="nav-cart-link"
                     >{`Cart (${totalItems})`}</Link>
-                </Popover.Button>
+                </PopoverButton>
                 <Transition
                     show={cartDropdownOpen}
                     as={Fragment}
@@ -75,9 +82,9 @@ const CartDropdown = ({
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                 >
-                    <Popover.Panel
+                    <PopoverPanel
                         static
-                        className="hidden small:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
+                        className="hidden md:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b rounded-bl-md rounded-br-md border-gray-200 w-[420px] text-ui-fg-base"
                         data-testid="nav-cart-dropdown"
                     >
                         <div className="p-4 flex items-center justify-center">
@@ -87,10 +94,10 @@ const CartDropdown = ({
                             <>
                                 <div className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
                                     {(cartState as any).items
-                                        .sort((a:any, b:any) => {
-                                            return a.created_at > b.created_at ? -1 : 1
+                                        .sort((a: any, b: any) => {
+                                            return a.created_at > b.created_at ? -1 : 1;
                                         })
-                                        .map((item:any) => (
+                                        .map((item: any) => (
                                             <div
                                                 className="grid grid-cols-[122px_1fr] gap-x-4"
                                                 key={item.id}
@@ -165,13 +172,12 @@ const CartDropdown = ({
                                         </span>
                                     </div>
                                     <Link href="/cart" passHref>
-                                        <button
+                                        <Button
                                             className="w-full"
-                                            // size="large"
                                             data-testid="go-to-cart-button"
                                         >
                                             Go to cart
-                                        </button>
+                                        </Button>
                                     </Link>
                                 </div>
                             </>
@@ -186,18 +192,18 @@ const CartDropdown = ({
                                         <Link href="/store">
                                             <>
                                                 <span className="sr-only">Go to all products page</span>
-                                                <button onClick={close}>Explore products</button>
+                                                <Button onClick={close}>Explore products</Button>
                                             </>
                                         </Link>
                                     </div>
                                 </div>
                             </div>
                         )}
-                    </Popover.Panel>
+                    </PopoverPanel>
                 </Transition>
             </Popover>
         </div>
-    )
-}
+    );
+};
 
-export default CartDropdown
+export default CartDropdown;

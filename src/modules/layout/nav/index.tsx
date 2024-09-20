@@ -1,16 +1,19 @@
 import Link from 'next/link';
 import React, { Suspense } from 'react';
-import OpenSideBar from './components/open-sidebar';
 import CartButton from './components/cart-button';
+import OpenSideBar from './components/open-sidebar';
 const Nav = async () => {
     return (
-        <div className="sticky top-0 inset-x-0 z-50 group">
-            <header className="relative h-16 mx-auto border-b duration-200 bg-white ">
+        <div className="sticky top-0 z-50 w-full border-border/40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <header className="relative h-16 mx-auto  duration-200 bg-white md:container flex  max-w-screen-2xl items-center">
                 <nav className="container text-sm text-foreground flex items-center justify-between w-full h-full  px-5">
-                    <div className="flex-1 basis-0 h-full flex items-center">
+                    <div className="hidden flex-1 basis-0 h-full md:flex items-center">
+                        Logo
+                    </div>
+                    <div className="md:hidden flex-1 basis-0 h-full flex items-center">
                         <OpenSideBar />
                     </div>
-
+                    
                     <div className=" flex items-center justify-center  h-full">
                         <Link
                             href="/"

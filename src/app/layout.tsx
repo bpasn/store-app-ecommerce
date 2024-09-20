@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
-
+import { Inter } from 'next/font/google'
 
 
 export const metadata: Metadata = {
@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000")
 };
 
+
+const inter = Inter({ subsets: ['latin'] })
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -16,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body >
         {children}
       </body>
     </html>

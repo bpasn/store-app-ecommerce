@@ -4,7 +4,7 @@ import { Popover, PopoverButton, Button as ButtonHeadlessui, PopoverPanel, Trans
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/modules/components/ui/button";
 type Props = {
     cart: any[];
 };

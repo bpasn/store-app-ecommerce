@@ -20,7 +20,7 @@
   }
 
   ::-webkit-scrollbar{
-    @apply w-[0px] ;
+    @apply w-[7px] ;
   }
 
   ::-webkit-scrollbar-track {
@@ -28,6 +28,9 @@
   }
   ::-webkit-scrollbar-thumb {
     @apply bg-gray-300 rounded-full;
+  }
+  .hide-scroll::-webkit-scrollbar {
+    @apply w-0;
   }
 }
 

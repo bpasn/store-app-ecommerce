@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/modules/components/ui/button";
 
 import {
@@ -12,47 +12,55 @@ import {
 import { useStoreDrawer } from "@/lib/hooks/store-drawer";
 import { Minus, Plus } from "lucide-react";
 import Image from 'next/image';
-import Menu from '@/assets/menu1.jpg'
+import Menu from '@/assets/menu1.jpg';
 
 interface DrawerOptionProps {
     open: boolean;
     onClose: () => void;
     children: React.ReactNode;
+    title:string;
+    imageUri:string;
 }
 const DrawerOption = ({
     open,
     onClose,
-    children
+    children,
+    title,
+    imageUri
 }: DrawerOptionProps) => {
     const handleOnchange = (value: boolean) => {
         if (!value) {
             onClose();
         }
-
+    };
+    const handleClick = () => {
+        onClose();
     }
     return (
         <Drawer open={open} onOpenChange={handleOnchange}>
             <DrawerContent>
-                <div className="mx-auto w-full max-w-lg h-[calc(100vh-10rem)] overflow-auto bg-gray-200">
-                    <DrawerHeader className="flex flex-col gap-3 p-0 bg-white">
-                        <DrawerTitle>Title</DrawerTitle>
-                        <div className="h-36 w-full  md:h-52 md:w-full relative">
-                            <Image fill src={Menu} alt={"menu"} className="h-full object-cover md:object-fill rounded-lg md:rounded-b-none" />
+                <div className="mx-auto w-full max-w-md h-[calc(100vh-10rem)] overflow-auto hide-scroll bg-gray-200">
+                    <div>
+                        <DrawerHeader className="flex flex-col gap-3 bg-white p-2">
+                            <DrawerTitle>{title}</DrawerTitle>
+                            <div className="h-36 w-full  md:h-52 md:w-full relative">
+                                <Image  src={`${process.env.NEXT_PUBLIC_DOMAIN_IMAGE}/${imageUri}`} alt={"menu"} width={300} height={300}  className="h-full w-full object-contain rounded-lg md:rounded-b-none" />
+                            </div>
+                        </DrawerHeader>
+                        <div className="p-0 pb-0 ">
+                            {children}
                         </div>
-                    </DrawerHeader>
-                    <div className="p-0 pb-0">
-                        {children}
+                        <DrawerFooter className="mt-2 bg-white h-full">
+                            <Button onClick={handleClick}>Submit</Button>
+                            <DrawerClose asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </DrawerClose>
+                        </DrawerFooter>
                     </div>
-                    <DrawerFooter className="mt-2 bg-white">
-                        <Button>Submit</Button>
-                        <DrawerClose asChild>
-                            <Button variant="outline">Cancel</Button>
-                        </DrawerClose>
-                    </DrawerFooter>
                 </div>
             </DrawerContent>
         </Drawer>
     );
-}
+};
 
 export default DrawerOption;

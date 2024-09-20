@@ -1,53 +1,108 @@
 'use client';
-import DrawerOption from '@/modules/components/ui/drawer-option'
-import { useStoreDrawer } from '@/lib/hooks/store-drawer'
-import React from 'react'
-import { Form, FormField, FormItem, FormLabel } from '../ui/form';
+import { useStoreDrawer } from '@/lib/hooks/store-drawer';
+import DrawerOption from '@/modules/components/ui/drawer-option';
+import { MinusIcon, PlusIcon, Tag } from 'lucide-react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Checkbox } from '@/modules/components/ui/checkbox';
+import { Button } from '../ui/button';
+import { Form, FormField, FormItem, FormLabel } from '../ui/form';
 import { Textarea } from '../ui/textarea';
-
+import { EachElement } from '@/lib/utils';
+import OptionChoice from './components/option-choice';
 
 const StoreDrawer = () => {
-    const { open, setOpen, } = useStoreDrawer();
+    const [qty, setQty] = React.useState(1);
+    const { open, setOpen, product, clearState } = useStoreDrawer();
     const form = useForm();
+
+    function onClick(adjustment: number) {
+        setQty(Math.max(1, Math.min(product?.stock.quantity!, qty + adjustment)));
+    }
+    const handleClose = () => {
+        setOpen(false);
+        clearState();
+    };
     return (
-        <DrawerOption onClose={() => setOpen(false)} open={open} >
-            <Form {...form}>
-                <form className='flex flex-col gap-2 mt-2'>
-                    <div className="bg-white p-4">
-                        <FormField
-                            control={form.control}
-                            name=''
-                            render={({ field }) => {
-                                return (
-                                    <FormItem className='flex flex-row gap-4 items-center'>
-                                        <Checkbox id={field.name} onChange={field.onChange} />
-                                        <FormLabel className='!mt-0' htmlFor={field.name}>Label</FormLabel>
-                                    </FormItem>
-                                )
-                            }}
-                        />
+        <React.Fragment>
+            {product && <DrawerOption
+                title={product?.nameTH!}
+                imageUri={product?.productImages[0].uri!}
+                onClose={handleClose}
+                open={open} >
+                <div className="flex flex-col gap-2  bg-white p-3">
+                    <div className="flex flex-row">
+                        <h2 className='font-bold'>{"<โปรโมชั่น>"} {product?.nameTH} {product?.price}</h2>
+                        <div className="ml-auto flex flex-row gap-2 items-center">
+                            <p className="text-gray-300 line-through">69</p>
+                            <p className="font-bold text-sm">{product?.price}</p>
+                        </div>
                     </div>
-                    <div className="bg-white p-4">
-                        <FormField
-                            control={form.control}
-                            name=''
-                            render={({ field }) => {
-                                return (
-                                    <FormItem className='flex flex-col'>
-                                        <FormLabel className='!mt-0' htmlFor={field.name}>รายละเอียดเพิ่มเติม</FormLabel>
-                                        <Textarea {...field} id={field.name} cols={1} placeholder="เช่น ไม่เอาผัก" />
-                                    </FormItem>
-                                )
-                            }}
-                        />
+                    <div className="flex flex-row gap-2">
+                        <Tag size={12} className='text-primary' />
+                        <span className='text-xs'>฿127 off</span>
+                        <span className='text-gray-300 ml-auto text-xs'>Base price</span>
                     </div>
+                    <p className="product-description text-xs md:text-sm text-gray-400">
+                        {product?.descriptionTH}
+                    </p>
+                </div>
+                <Form {...form}>
+                    <form className='flex flex-col gap-2 mt-2'>
+                        <EachElement
+                            of={product?.productOptions!}
+                            render={(option) => <OptionChoice {...option} />}
+                        />
+                        <div className="p-4 bg-white">
+                            <div className="flex items-center justify-center space-x-2">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 shrink-1 rounded-full"
+                                    onClick={() => onClick(-1)}
+                                    disabled={qty <= 1}
+                                >
+                                    <MinusIcon className="h-4 w-4" />
+                                    <span className="sr-only">Decrease</span>
+                                </Button>
+                                <div className="text-center">
+                                    <div className="text-md md:text-lg font-bold tracking-tighter">
+                                        {qty}
+                                    </div>
+                                    <div className="text-[0.70rem] uppercase text-muted-foreground">
+                                        Quantity
+                                    </div>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 shrink-0 rounded-full"
+                                    onClick={() => onClick(1)}
+                                    disabled={qty >= product?.stock.quantity!}
+                                >
+                                    <PlusIcon className="h-4 w-4" />
+                                    <span className="sr-only">Increase</span>
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="bg-white p-4">
+                            <FormField
+                                control={form.control}
+                                name=''
+                                render={({ field }) => {
+                                    return (
+                                        <FormItem className='flex flex-col'>
+                                            <FormLabel className='!mt-0' htmlFor={field.name}>รายละเอียดเพิ่มเติม</FormLabel>
+                                            <Textarea {...field} id={field.name} cols={1} placeholder="เช่น ไม่เอาผัก" />
+                                        </FormItem>
+                                    );
+                                }}
+                            />
+                        </div>
+                    </form>
+                </Form>
+            </DrawerOption>}
+        </React.Fragment>
+    );
+};
 
-                </form>
-            </Form>
-        </DrawerOption>
-    )
-}
-
-export default StoreDrawer
+export default StoreDrawer;

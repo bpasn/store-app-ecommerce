@@ -3,19 +3,24 @@
 import { EachElement } from "@/lib/utils";
 import ProductCard from "./components/product-card";
 
-const Product = () => {
+interface ProductProps {
+    products: ProductModal[];
+}
+const Product = ({
+    products
+}: ProductProps) => {
     return (
         <div className="py-8 grid grid-cols-1 md:gap-10 md:grid-cols-4">
             <EachElement
-            of={Array.from(Array(5).keys())}
-                render={() => {
+                of={products}
+                render={(product: ProductModal) => {
                     return (
-                        <ProductCard />
-                    )
+                        <ProductCard product={product} />
+                    );
                 }}
             />
         </div>
     );
-}
+};
 
 export default Product;

@@ -7,7 +7,7 @@ const Loading = () => {
     return (
         <div className="py-8 grid grid-cols-1 md:gap-10 md:grid-cols-4">
             <EachElement
-                of={Array.from(Array(10).keys())}
+                of={Array.from(Array(16).keys())}
                 render={() => (
                     <div className="flex flex-col space-y-3">
                         <Skeleton className="h-[125px] w-[250px] rounded-xl" />

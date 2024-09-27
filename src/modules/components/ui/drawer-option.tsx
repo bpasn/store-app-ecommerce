@@ -50,12 +50,6 @@ const DrawerOption = ({
                         <div className="p-0 pb-0 ">
                             {children}
                         </div>
-                        <DrawerFooter className="mt-2 bg-white h-full">
-                            <Button onClick={handleClick}>Submit</Button>
-                            <DrawerClose asChild>
-                                <Button variant="outline">Cancel</Button>
-                            </DrawerClose>
-                        </DrawerFooter>
                     </div>
                 </div>
             </DrawerContent>

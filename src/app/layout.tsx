@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 import { Inter } from 'next/font/google'
+import { ToastProvider } from "@/modules/components/ui/toast";
 
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body >
         {children}
+
       </body>
     </html>
   );

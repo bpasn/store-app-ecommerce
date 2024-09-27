@@ -17,6 +17,6 @@ export const useStoreDrawer = create<IDrawerStore>()(
             });
         },
         product: null,
-        setProduct: (product: ProductModal) => set({ product })
+        setProduct: (product: ProductModal) => set({ product, open: true })
     })
 );

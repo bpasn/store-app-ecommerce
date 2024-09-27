@@ -27,6 +27,7 @@ const config = {
       lg: "960px",
       lgl: "1024px",
       xl: "1280px",
+      "2xl": "1536px"
     },
     extend: {
       fontSize: {

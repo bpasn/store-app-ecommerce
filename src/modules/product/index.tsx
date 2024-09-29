@@ -1,21 +1,27 @@
 "use client";
 
 import { EachElement } from "@/lib/utils";
+import React from "react";
+import { Separator } from "../components/ui/separator";
 import ProductCard from "./components/product-card";
 
 interface ProductProps {
-    products: ProductModal[];
+    products: ProductWithCategory[];
 }
 const Product = ({
     products
 }: ProductProps) => {
     return (
-        <div className="py-8 grid grid-cols-1 md:gap-10 md:grid-cols-4">
+        <div className="py-2 px-3 flex flex-col gap-3">
             <EachElement
                 of={products}
-                render={(product: ProductModal) => {
+                render={(product: ProductWithCategory, index) => {
                     return (
-                        <ProductCard product={product} />
+                        <React.Fragment>
+                            {index >= 1 && (<Separator />)}
+                            <ProductCard product={product} />
+
+                        </React.Fragment>
                     );
                 }}
             />

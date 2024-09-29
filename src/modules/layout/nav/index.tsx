@@ -1,8 +1,11 @@
+'use client';
 import Link from 'next/link';
 import React, { Suspense } from 'react';
 import CartButton from './components/cart-button';
 import OpenSideBar from './components/open-sidebar';
-const Nav = async () => {
+import { useStoreCart } from '@/lib/hooks/store-cart';
+const Nav = () => {
+    const cart = useStoreCart(s => s.cart);
     return (
         <header className="sticky top-0 z-50 w-full border-border/40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className='container flex h-14 max-w-screen-2xl items-center'>

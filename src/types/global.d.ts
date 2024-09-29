@@ -13,7 +13,7 @@ interface ProductModal {
 
 interface ProductImageModal {
     id: string;
-    uri: string;
+    source: string;
 }
 
 interface ProductCategoryModal {
@@ -26,12 +26,13 @@ interface ProductOptionModal {
     id: string;
     optionName: string;
     oneMustBeChosen: boolean;
-    manyCanBeChosed; boolean;
+    manyCanBeChosen; boolean;
     lengthSelect: number;
     choices: ChoiceModal[];
 }
 
 interface ChoiceModal {
+    id: string;
     name: string;
     choiceEffect?: 'unchanged' | 'incresed' | 'decresed';
     price: number;
@@ -58,3 +59,11 @@ enum StatusStock {
     LOW_STOCK = "LOW_STOCK"
 }
 
+
+interface ProductWithCategory extends Omit<ProductModal, "categories"> { }
+
+interface CategoryWithProduct {
+    categoryId: string;
+    categoryName: string;
+    products: ProductWithCategory[];
+}

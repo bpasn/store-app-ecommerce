@@ -39,8 +39,8 @@ const DrawerOption = ({
     return (
         <Drawer open={open} onOpenChange={handleOnchange}>
             <DrawerContent>
-                <div className="mx-auto w-full max-w-md h-[calc(100vh-10rem)] overflow-auto hide-scroll bg-gray-200">
-                    <div>
+                <div className="mx-auto w-full max-w-md h-[calc(100vh-10rem)] overflow-auto hide-scroll">
+                    <div className="flex flex-col">
                         <DrawerHeader className="flex flex-col gap-3 bg-white p-2">
                             <DrawerTitle>{title}</DrawerTitle>
                             <div className="h-36 w-full  md:h-52 md:w-full relative">

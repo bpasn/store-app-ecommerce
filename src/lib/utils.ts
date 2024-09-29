@@ -3,6 +3,7 @@ import { Children } from "react";
 import { twMerge } from "tailwind-merge";
 import BaseException from "./error";
 import axios, { AxiosError } from "axios";
+import { OptionChoiceCart } from "./hooks/store-cart";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -36,3 +37,21 @@ export const axiosInstance = () => {
 };
 
 export const delay = async (duration: number) => new Promise(resolve => setTimeout(resolve, duration));
+
+
+export const totalPrice = (price: number, option: OptionChoiceCart[]) => {
+  const total = option.reduce((prv, cur) => {
+    return prv + cur.choices.reduce((p, c) => p + c.price, 0);
+  }, price);
+  return total;
+};
+
+export const formatPrice = (totalPrice:number) => {
+  const formatPrice = new Intl.NumberFormat("th-TH", {
+    style: "currency",
+    currency: "THB",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(totalPrice);
+  return formatPrice;
+}

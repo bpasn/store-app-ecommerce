@@ -1,26 +1,23 @@
 "use client";
 
-import { Popover, PopoverButton, Button as ButtonHeadlessui, PopoverPanel, Transition } from "@headlessui/react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
-import { Fragment, useEffect, useRef, useState } from "react";
+import IconLucide from "@/lib/hooks/icon-lucide";
+import { CartStore, useStoreCart } from "@/lib/hooks/store-cart";
+import { EachElement, formatPrice, totalPrice } from "@/lib/utils";
 import { Button } from "@/modules/components/ui/button";
-type Props = {
-    cart: any[];
-};
+import Thumbnail from "@/modules/product/components/thumbnai";
+import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Fragment, useEffect, useRef, useState } from "react";
 
-const CartDropdown = ({
-    cart: cartState
-}: Props) => {
+const CartDropdown = () => {
     const [activeTimer, setActiveTimer] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
-
     const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
-
-
+    const cartState = useStoreCart(state => state.cart);
     const open = () => setCartDropdownOpen(true);
     const close = () => setCartDropdownOpen(false);
 
-    const totalItems = 0;
+    const totalItems = cartState.length;
 
     const itemRef = useRef<number>(0);
 
@@ -70,7 +67,7 @@ const CartDropdown = ({
                         className="hover:text-ui-fg-base"
                         href="/cart"
                         data-testid="nav-cart-link"
-                    >{`Cart (${totalItems})`}</Link>
+                    >{`Cart (${cartState.length})`}</Link>
                 </PopoverButton>
                 <Transition
                     show={cartDropdownOpen}
@@ -90,63 +87,48 @@ const CartDropdown = ({
                         <div className="p-4 flex items-center justify-center">
                             <h3 className="text-large-semi">Cart</h3>
                         </div>
-                        {cartState && (cartState as any).items?.length ? (
+                        {cartState && (cartState as CartStore[])?.length ? (
                             <>
                                 <div className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
-                                    {(cartState as any).items
-                                        .sort((a: any, b: any) => {
-                                            return a.created_at > b.created_at ? -1 : 1;
-                                        })
-                                        .map((item: any) => (
+                                    {(cartState as CartStore[])
+                                        .map((item: CartStore) => (
                                             <div
                                                 className="grid grid-cols-[122px_1fr] gap-x-4"
                                                 key={item.id}
                                                 data-testid="cart-item"
                                             >
                                                 <Link
-                                                    href={`/products/${item.variant.product.handle}`}
+                                                    href={`/products/${item.id}`}
                                                     className="w-24"
                                                 >
-                                                    {/* <Thumbnail thumbnail={item.thumbnail} size="square" /> */}
+                                                    <Thumbnail images={item.productImages} size="square" />
                                                 </Link>
                                                 <div className="flex flex-col justify-between flex-1">
                                                     <div className="flex flex-col flex-1">
                                                         <div className="flex items-start justify-between">
-                                                            <div className="flex flex-col overflow-ellipsis whitespace-nowrap mr-4 w-[180px]">
-                                                                <h3 className="text-base-regular overflow-hidden text-ellipsis">
-                                                                    <Link
-                                                                        href={`/products/${item.variant.product.handle}`}
-                                                                        data-testid="product-link"
-                                                                    >
-                                                                        {item.title}
+                                                            <div className="text-sm flex flex-col overflow-ellipsis whitespace-nowrap mr-4 w-full">
+                                                                <h3 className="overflow-hidden text-ellipsis ">
+                                                                    <Link href={`/products/${item.id}`} className="flex" >
+                                                                        {item.nameTH}
+                                                                        <span className="ml-auto">{formatPrice(totalPrice(item.price, item.optionChoice))}</span>
                                                                     </Link>
                                                                 </h3>
-                                                                {/* <LineItemOptions
-                                                                    variant={item.variant}
-                                                                    data-testid="cart-item-variant"
-                                                                    data-value={item.variant}
-                                                                /> */}
+                                                                <p className="flex flex-row text-xs">
+                                                                    Varaing : {item.categories.map(e => e.name).join(", ")}
+                                                                </p>
                                                                 <span
-                                                                    data-testid="cart-item-quantity"
-                                                                    data-value={item.quantity}
+                                                                    className="flex text-xs"
                                                                 >
-                                                                    Quantity: {item.quantity}
+                                                                    Quantity : {item.quantity}
                                                                 </span>
-                                                            </div>
-                                                            <div className="flex justify-end">
-                                                                {/* <LineItemPrice
-                                                                    region={cartState.region}
-                                                                    item={item}
-                                                                    style="tight"
-                                                                /> */}
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <button
                                                         id={item.id}
-                                                        className="mt-1"
-                                                        data-testid="cart-item-remove-button"
+                                                        className="mt-1 flex flex-row items-center text-sm gap-2"
                                                     >
+                                                        <IconLucide name="Trash2" size={14} />
                                                         Remove
                                                     </button>
                                                 </div>
@@ -157,18 +139,15 @@ const CartDropdown = ({
                                     <div className="flex items-center justify-between">
                                         <span className="text-ui-fg-base font-semibold">
                                             Subtotal{" "}
-                                            <span className="font-normal">(excl. taxes)</span>
                                         </span>
                                         <span
-                                            className="text-large-semi"
-                                            data-testid="cart-subtotal"
-                                            data-value={(cartState as any).subtotal || 0}
+                                            className="text-md"
                                         >
-                                            {/* {formatAmount({
-                                                amount: cartState.subtotal || 0,
-                                                region: cartState.region,
-                                                includeTaxes: false,
-                                            })} */}
+                                            {
+                                                formatPrice(cartState.reduce((prv, current) => {
+                                                    return prv + totalPrice(current.price * current.quantity, current.optionChoice);
+                                                }, 0))
+                                            }
                                         </span>
                                     </div>
                                     <Link href="/cart" passHref>

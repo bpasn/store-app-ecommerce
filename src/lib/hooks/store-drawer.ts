@@ -4,19 +4,25 @@ interface IDrawerStore {
     open: boolean;
     setOpen: (v: boolean) => void;
     clearState: () => void;
-    product: ProductModal | null;
-    setProduct: (product: ProductModal) => void;
+    product: ProductWithCategory | null;
+    setProduct: (product: ProductWithCategory) => void;
 }
 export const useStoreDrawer = create<IDrawerStore>()(
     (set, _) => ({
         open: false,
-        setOpen: (v) => set({ open: v }),
+        setOpen: (v) => {
+            if (v) {
+                set({ open: v });
+            } else {
+                set({ open: v, product: null });
+            }
+        },
         clearState: () => {
             set({
                 product: null
             });
         },
         product: null,
-        setProduct: (product: ProductModal) => set({ product, open: true })
+        setProduct: (product: ProductWithCategory) => set({ product, open: true })
     })
 );

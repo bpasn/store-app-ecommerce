@@ -2,7 +2,7 @@
 
 import IconLucide from "@/lib/hooks/icon-lucide";
 import { CartStore, useStoreCart } from "@/lib/hooks/store-cart";
-import { EachElement, formatPrice, totalPrice } from "@/lib/utils";
+import { formatPrice, summary, totalPrice } from "@/lib/utils";
 import { Button } from "@/modules/components/ui/button";
 import Thumbnail from "@/modules/product/components/thumbnai";
 import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
@@ -14,6 +14,7 @@ const CartDropdown = () => {
     const [activeTimer, setActiveTimer] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
     const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
     const cartState = useStoreCart(state => state.cart);
+    const removeFromCart = useStoreCart(state => state.removeFromCart);
     const open = () => setCartDropdownOpen(true);
     const close = () => setCartDropdownOpen(false);
 
@@ -89,7 +90,7 @@ const CartDropdown = () => {
                         </div>
                         {cartState && (cartState as CartStore[])?.length ? (
                             <>
-                                <div className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
+                                <div className="overflow-y-scroll max-h-[200px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
                                     {(cartState as CartStore[])
                                         .map((item: CartStore) => (
                                             <div
@@ -110,11 +111,11 @@ const CartDropdown = () => {
                                                                 <h3 className="overflow-hidden text-ellipsis ">
                                                                     <Link href={`/products/${item.id}`} className="flex" >
                                                                         {item.nameTH}
-                                                                        <span className="ml-auto">{formatPrice(totalPrice(item.price, item.optionChoice))}</span>
+                                                                        <span className="ml-auto">{formatPrice(totalPrice(item.price, item.productOptions) * item.quantity)}</span>
                                                                     </Link>
                                                                 </h3>
                                                                 <p className="flex flex-row text-xs">
-                                                                    Varaing : {item.categories.map(e => e.name).join(", ")}
+                                                                    {/* Varaing : {item.map(e => e.name).join(", ")} */}
                                                                 </p>
                                                                 <span
                                                                     className="flex text-xs"
@@ -127,6 +128,9 @@ const CartDropdown = () => {
                                                     <button
                                                         id={item.id}
                                                         className="mt-1 flex flex-row items-center text-sm gap-2"
+                                                        onClick={() => {
+                                                            removeFromCart(item.id)
+                                                        }}
                                                     >
                                                         <IconLucide name="Trash2" size={14} />
                                                         Remove
@@ -144,9 +148,7 @@ const CartDropdown = () => {
                                             className="text-md"
                                         >
                                             {
-                                                formatPrice(cartState.reduce((prv, current) => {
-                                                    return prv + totalPrice(current.price * current.quantity, current.optionChoice);
-                                                }, 0))
+                                                formatPrice(summary(cartState))
                                             }
                                         </span>
                                     </div>

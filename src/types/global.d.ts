@@ -1,15 +1,15 @@
-interface ProductModal {
-    id: string,
-    nameTH: string,
-    nameEN?: string,
-    descriptionTH?: string,
-    descriptionEN?: string,
-    price: number,
-    stock: StockModal,
-    productImages: ProductImageModal[],
-    categories: ProductCategoryModal[],
-    productOptions: ProductOptionModal[],
-}
+// interface ProductModal {
+//     id: string,
+//     nameTH: string,
+//     nameEN?: string,
+//     descriptionTH?: string,
+//     descriptionEN?: string,
+//     price: number,
+//     stock: StockModal,
+//     productImages: ProductImageModal[],
+//     categories: ProductCategoryModal[],
+//     productOptions: ProductOptionModal[],
+// }
 
 interface ProductImageModal {
     id: string;
@@ -60,10 +60,10 @@ enum StatusStock {
 }
 
 
-interface ProductWithCategory extends Omit<ProductModal, "categories"> { }
+// interface ProductWithCategory extends Omit<ProductModel, "categories"> { }
 
-interface CategoryWithProduct {
-    categoryId: string;
-    categoryName: string;
-    products: ProductWithCategory[];
-}
+// interface CategoryWithProduct {
+//     categoryId: string;
+//     categoryName: string;
+//     products: ProductWithCategory[];
+// }

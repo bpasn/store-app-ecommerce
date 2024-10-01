@@ -1,18 +1,17 @@
-import { OptionChoiceCart } from "@/lib/hooks/store-cart";
 import { cn, EachElement } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { Label } from "../../ui/label";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { CheckProps } from "../store-drawer";
 
-const RadioGroupChoice = <T extends OptionChoiceCart>({
-    defaultValue,
-    choices,
+const RadioGroupChoice = ({
     optionName,
     pick,
-    lengthSelect,
-    setChoice,
-}: CheckProps<T>) => {
+    defaultValue,
+    choices,
+    onChange,
+    lengthSelect
+}: CheckProps) => {
     return (
         <div className="border p-4 flex flex-col gap-3 bg-white">
             <div className="flex flex-row items-center gap-2">
@@ -20,20 +19,21 @@ const RadioGroupChoice = <T extends OptionChoiceCart>({
                 <span className="text-xs text-gray-400">{
                     pick ? "Pick 1" : ""
                 }</span>
-                {defaultValue !== undefined && (
+                {defaultValue && defaultValue.choices.length ? (
                     <div className={cn(
                         "p-0 m-0 ml-auto rounded-full h-4 w-4 ring-ring bg-primary align-middle flex items-center justify-center text-white "
                     )}>
                         <Check size={12} strokeWidth={3} />
                     </div>
-                )}
+                ) : null}
             </div>
             <RadioGroup defaultValue={(defaultValue && defaultValue.choices.length) ? defaultValue.choices[0].id : ""}
                 onValueChange={(v: string) => {
-                    setChoice(prv => [
-                        ...prv.filter(e => e.optionName !== optionName),
-                        { optionName, choices: [{ id: v, price: choices.find(e => e.id === v)?.price!, name: choices.find(e => e.id === v)?.name! }] }
-                    ]);
+                    // setChoice(prv => [
+                    //     ...prv.filter(e => e.optionName !== optionName),
+                    //     { optionName, choices: [{ id: v, price: choices.find(e => e.id === v)?.price!, name: choices.find(e => e.id === v)?.name! }] }
+                    // ]);
+                    onChange(true, choices.find(e => e.id === v)!);
                 }} className=' font-normal text-gray-600'>
                 <EachElement
                     of={(choices || []) as ChoiceModal[]}

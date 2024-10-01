@@ -1,9 +1,8 @@
 'use client';
+import { useStoreCart } from '@/lib/hooks/store-cart';
 import Link from 'next/link';
-import React, { Suspense } from 'react';
 import CartButton from './components/cart-button';
 import OpenSideBar from './components/open-sidebar';
-import { useStoreCart } from '@/lib/hooks/store-cart';
 const Nav = () => {
     const cart = useStoreCart(s => s.cart);
     return (
@@ -12,7 +11,7 @@ const Nav = () => {
                 <div className="mr-4 hidden md:flex md:flex-1">
                     <nav className="m-0 text-sm text-foreground flex items-center justify-between w-full h-full">
                         <div className="hidden flex-1 basis-0 h-full md:flex items-center">
-                            Logo
+                            <Link href={"/"}>Logo</Link>
                         </div>
                         <div className=" flex items-center justify-center  h-full">
                             <Link
@@ -28,8 +27,8 @@ const Nav = () => {
                 <div className="md:hidden flex-1 basis-0 h-full flex items-center">
                     <OpenSideBar />
                 </div>
-                <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-                    <div className="hidden md:flex items-center gap-x-6 h-full">
+                <div className="text-xs flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
+                    <div className="hidden md:flex items-center gap-x-6 h-full ">
                         {process.env.FEATURE_SEARCH_ENABLED && (
                             <Link
                                 className="hover:text-ui-fg-base"
@@ -40,27 +39,23 @@ const Nav = () => {
                                 Search
                             </Link>
                         )}
-                        <Link
-                            className="hover:text-ui-fg-base"
-                            href="/account"
-                            data-testid="nav-account-link"
-                        >
-                            Account
-                        </Link>
+                        {/* <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Avatar className='cursor-pointer'>
+                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                </Avatar>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56">
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem asChild>
+                                        <Link href={'/order'} className='cursor-pointer'>Order</Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu> */}
                     </div>
-                    <Suspense
-                        fallback={
-                            <Link
-                                className="hover:text-ui-fg-base flex gap-2"
-                                href="/cart"
-                                data-testid="nav-cart-link"
-                            >
-                                Cart (0)
-                            </Link>
-                        }
-                    >
-                        <CartButton />
-                    </Suspense>
+                    <CartButton />
+                     <Link href={'/order'} className='cursor-pointer'>Order</Link>
                 </div>
             </div>
         </header>

@@ -1,27 +1,23 @@
 import { create, StateCreator } from "zustand";
 import { devtools, persist } from 'zustand/middleware';
 import { toast } from "./use-toast";
+import { ProductModel, ProductWithoutCategory } from "../schemes/product";
+import { OptionChoiceScheme } from "../schemes/product-option";
+import { getDrawerState } from "./store-drawer";
 
-export interface OptionChoiceCart {
-    optionName: string;
-    choices: {
-        id: string;
-        name: string;
-        price: number;
-    }[];
-}
-export interface CartStore extends Omit<ProductModal, "stock" | "productOptions" | "categories"> {
+export interface CartStore extends ProductWithoutCategory {
     quantity: number;
-    optionChoice: OptionChoiceCart[];
+    // optionChoice: OptionChoiceScheme[];
 }
 interface IStoreCart {
     cart: CartStore[];
     addToCart: (product: CartStore) => void;
-    removeFromCart: (product: CartStore) => void;
+    removeFromCart: (id: string) => void;
     increment: (id: string) => void;
     decrement: (id: string) => void;
     reset: () => void;
     getCart: (id: string) => CartStore | undefined;
+    setQuantity: (id: string, qty: number) => void;
 }
 
 const middlewareCart = (f: StateCreator<IStoreCart>) => devtools(persist(f, { name: "cartStore" }));
@@ -29,6 +25,17 @@ export const useStoreCart = create<IStoreCart>()(
     middlewareCart(
         (set, get) => ({
             cart: [],
+            // totalPrice: () => {
+            //     const t = get().cart.reduce(
+            //         (prv, current) => prv + (current.price + (
+            //             current.productOptions.reduce(
+            //                 (pOption, cOption) => {
+            //                     return pOption + cOption.choices.reduce(
+            //                         (p, c) => p + c.price, 0);
+            //                 }, 0)
+            //         )) * current.quantity, 0);
+            //     return t;
+            // },
             getCart: (id: string) => get().cart.find(c => c.id === id),
             addToCart: (p) => {
                 const newItem = p;
@@ -45,10 +52,10 @@ export const useStoreCart = create<IStoreCart>()(
                 }));
 
             },
-            removeFromCart: (p) => {
+            removeFromCart: (id:string) => {
                 return set(prv => ({
                     ...prv,
-                    cart: prv.cart.filter(e => e.id !== p.id)
+                    cart: prv.cart.filter(e => e.id !== id)
                 }));
             },
             increment: (id: string) => {
@@ -75,7 +82,13 @@ export const useStoreCart = create<IStoreCart>()(
                 ...prv,
                 cart: prv.cart.map(e => e.id === id ? { ...e, quantity: e.quantity - 1 } : e)
             })),
-            reset: () => set({ cart: [] })
+            reset: () => set({ cart: [] }),
+            setQuantity: (id, qty) => {
+                set(prv => ({
+                    ...prv,
+                    cart: prv.cart.map(e => e.id === id ? { ...e, quantity: qty } : e)
+                }));
+            },
         })
     )
 );

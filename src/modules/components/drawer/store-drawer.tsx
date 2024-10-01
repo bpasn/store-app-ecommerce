@@ -1,28 +1,32 @@
 'use client';
-import { OptionChoiceCart, useStoreCart } from '@/lib/hooks/store-cart';
+import { useStoreCart } from '@/lib/hooks/store-cart';
 import { useStoreDrawer } from '@/lib/hooks/store-drawer';
 import { toast } from '@/lib/hooks/use-toast';
+import { OptionChoiceScheme, productOptionScheme } from '@/lib/schemes/product-option';
+import { ChoiceModel } from '@/lib/schemes/product-option-choice';
 import { EachElement, totalPrice } from '@/lib/utils';
 import DrawerOption from '@/modules/components/ui/drawer-option';
 import { MinusIcon, PlusIcon } from 'lucide-react';
-import React, { SetStateAction, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
 import { Button } from '../ui/button';
 import { DrawerClose, DrawerFooter } from '../ui/drawer';
 import CheckGroupChoice from './components/check-group-choice';
 import RadioGroupChoice from './components/radio-group-choice';
-export interface CheckProps<T extends OptionChoiceCart> {
-    optionName: string;
+export interface CheckProps {
     pick: boolean;
-    choices: ChoiceModal[];
-    defaultValue: T;
+    optionName: string;
+    choices: ChoiceModel[];
+    defaultValue: OptionChoiceScheme;
     lengthSelect: number;
-    setChoice: React.Dispatch<SetStateAction<OptionChoiceCart[]>>;
+    onChange: (checked: boolean, choice: ChoiceModel) => void;
 }
+
 const StoreDrawer = () => {
     const { open, setOpen, product, clearState } = useStoreDrawer();
     const { addToCart, getCart } = useStoreCart();
 
-    const [optionChoice, setOptionChoice] = useState<OptionChoiceCart[]>([]);
+    const [optionChoice, setOptionChoice] = useState<OptionChoiceScheme[]>([]);
     const [qty, setQty] = useState(getCart(product?.id!)?.quantity ?? 1);
     const handleClose = () => {
         setOpen(false);
@@ -30,20 +34,25 @@ const StoreDrawer = () => {
     };
 
     const handleAdd = () => {
-        product?.productOptions.forEach((v) => {
-            if (v.oneMustBeChosen && !optionChoice.find(e => e.optionName === v.optionName)) {
-                toast({
-                    title: "WARNING",
-                    description: v.optionName + " is required",
-                    duration: 2 * 1000
-                });
-                return;
-            }
-        });
-        addToCart({ ...product!, quantity: qty, optionChoice: optionChoice });
-        setOpen(false);
+        const validate = z.array(productOptionScheme).safeParse(optionChoice);
+        if (!validate.success) {
+            toast({
+                title: "WARNING",
+                description: validate.error.errors.map(e => e.message).join(", "),
+                duration: 2 * 1000
+            });
+            return;
+        }
+        addToCart({ ...product!, quantity: qty, productOptions: optionChoice });
+        clearState();
         setOptionChoice([]);
+        setQty(1);
     };
+    useEffect(() => {
+        if (product && product.productOptions.length && !optionChoice.length) {
+            setOptionChoice(product.productOptions.map(e => ({ ...e, choices: [] })));
+        }
+    }, [optionChoice, product]);
     return (
         product && (
             <DrawerOption
@@ -64,7 +73,7 @@ const StoreDrawer = () => {
                         <span className='text-gray-300 ml-auto text-xs'>Base price</span>
                     </div> */}
                     <p className="product-description text-xs md:text-sm text-gray-400">
-                        {product?.descriptionTH || "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam nulla veniam cupiditate perferendis molestiae id beatae qui rem? Soluta, id?"} 
+                        {product?.descriptionTH || "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam nulla veniam cupiditate perferendis molestiae id beatae qui rem? Soluta, id?"}
                     </p>
                 </div>
                 <div className='flex flex-col gap-2 mt-2 h-full bg-gray-200'>
@@ -72,25 +81,44 @@ const StoreDrawer = () => {
                     <EachElement
                         of={product?.productOptions || []}
                         render={(option, index) => {
-                            if (option.manyCanBeChosen) {
-                                return <CheckGroupChoice
-                                    optionName={option.optionName}
+                            return option.manyCanBeChosen
+                                ? (<CheckGroupChoice
                                     pick={option.oneMustBeChosen}
                                     choices={option.choices}
-                                    defaultValue={optionChoice.find(e => e.optionName === option.optionName)!}
-                                    setChoice={setOptionChoice}
-
-                                    lengthSelect={option.lengthSelect} />;
-                            } else {
-                                return <RadioGroupChoice
                                     optionName={option.optionName}
-                                    pick={option.oneMustBeChosen}
-                                    choices={option.choices}
                                     defaultValue={optionChoice.find(e => e.optionName === option.optionName)!}
-                                    setChoice={setOptionChoice}
+                                    onChange={(checked, choice) => {
+                                        const currentChoice = optionChoice.find(e => e.id === option.id)?.choices || [];
+                                        const updatedValue = checked
+                                            ? [...currentChoice!, choice]
+                                            : currentChoice?.filter(e => e.id !== choice.id);
+                                        console.log({ updatedValue });
+                                        if (!updatedValue.length) {
+                                            setOptionChoice(prv => prv.filter(e => e.id !== option.id));
+                                            return;
+                                        }
+                                        setOptionChoice(prv => {
+                                            const o: OptionChoiceScheme = { ...option, choices: updatedValue };
+                                            return [...prv.filter(e => e.optionName !== option.optionName), o];
+                                        });
+                                    }}
                                     lengthSelect={option.lengthSelect}
-                                />;
-                            }
+                                />)
+                                : (<RadioGroupChoice
+                                    pick={option.oneMustBeChosen}
+                                    choices={option.choices}
+                                    optionName={option.optionName}
+                                    defaultValue={optionChoice.find(e => e.optionName === option.optionName)!}
+                                    onChange={(_, choice) => {
+                                        setOptionChoice(prv => {
+                                            return [...prv.filter(e => e.optionName !== option.optionName), {
+                                                ...option,
+                                                choices: [choice]
+                                            }];
+                                        });
+                                    }}
+                                    lengthSelect={option.lengthSelect}
+                                />);
                         }}
                     />
 
@@ -127,7 +155,7 @@ const StoreDrawer = () => {
                                 </Button>
                             </div>
                         </div>
-                        <Button onClick={handleAdd}>Add to cart - {totalPrice(product.price * qty, optionChoice)}</Button>
+                        <Button onClick={handleAdd}>Add to cart - {totalPrice(product.price , optionChoice) * qty}</Button>
                         <DrawerClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DrawerClose>

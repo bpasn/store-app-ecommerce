@@ -2,6 +2,7 @@ import Image from "next/image";
 import NoImage from '@/assets/image/no-image.jpg';
 import React from "react";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { cn } from "@/lib/utils";
 const ImageProvider = ({
     src,
     ...props
@@ -11,7 +12,7 @@ const ImageProvider = ({
         <Image
             src={image}
             alt="Thumbnail"
-            className="absolute inset-0 object-cover object-center"
+            className={cn("absolute inset-0 object-cover object-center",props.className)}
             draggable={false}
             quality={50}
             sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"

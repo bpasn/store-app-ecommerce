@@ -1,11 +1,12 @@
 import { create } from "zustand";
+import { ProductWithoutCategory } from "../schemes/product";
 
 interface IDrawerStore {
     open: boolean;
     setOpen: (v: boolean) => void;
     clearState: () => void;
-    product: ProductWithCategory | null;
-    setProduct: (product: ProductWithCategory) => void;
+    product: ProductWithoutCategory | null;
+    setProduct: (product: ProductWithoutCategory) => void;
 }
 export const useStoreDrawer = create<IDrawerStore>()(
     (set, _) => ({
@@ -19,10 +20,13 @@ export const useStoreDrawer = create<IDrawerStore>()(
         },
         clearState: () => {
             set({
+                open: false,
                 product: null
             });
         },
         product: null,
-        setProduct: (product: ProductWithCategory) => set({ product, open: true })
+        setProduct: (product: ProductWithoutCategory) => set({ product, open: true })
     })
 );
+
+export const getDrawerState = useStoreDrawer.getState;

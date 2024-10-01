@@ -1,14 +1,12 @@
 "use client";
 
 import { useStoreDrawer } from "@/lib/hooks/store-drawer";
+import { ProductWithoutCategory } from "@/lib/schemes/product";
 import { formatPrice } from "@/lib/utils";
-import { Button } from "@/modules/components/ui/button";
 import ImageProvider from "@/providers/image-provider";
-import { Plus } from "lucide-react";
-import Image from "next/image";
 
 interface ProductCardProps {
-    product: ProductWithCategory;
+    product: ProductWithoutCategory;
 }
 const ProductCard = ({
     product

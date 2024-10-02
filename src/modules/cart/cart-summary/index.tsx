@@ -1,14 +1,17 @@
 "use client";
 import { useStoreCart } from "@/lib/hooks/store-cart";
+import { toast } from "@/lib/hooks/use-toast";
 import { createOrder, OrderCreate } from "@/lib/services/order.service";
-import { cn, formatPrice, summary } from "@/lib/utils";
+import { cn, formatPrice, report, summary } from "@/lib/utils";
 import { Button } from "@/modules/components/ui/button";
 import { Separator } from "@/modules/components/ui/separator";
+import { useRouter } from "next/navigation";
 import React, { useMemo } from "react";
 
 const CartSummary = () => {
-    const carts = useStoreCart(s => s.cart);
+    const { cart: carts ,reset } = useStoreCart();
     const [loading, setLoading] = React.useState(false);
+    const router = useRouter();
     const totalPrice = useMemo(() => {
         return carts && carts.length > 0 ? summary(carts) : 0;
     }, [carts]);
@@ -22,9 +25,21 @@ const CartSummary = () => {
                 quantity: e.quantity
             }))
         };
+        try {
+            await createOrder(toOrderCreate);
+            reset();
+            router.push("/order");
+        } catch (error) {
+            toast({
+                title: "ERROR",
+                description: report(error),
+                duration: 2 * 1000,
+                variant: "destructive"
+            })
+        } finally {
+            setLoading(false);
+        }
 
-        await createOrder(toOrderCreate);
-        setLoading(false);
     };
     return (
         <div className="flex flex-col  gap-5 h-full">

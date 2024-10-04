@@ -2,8 +2,8 @@
 import { useStoreCart } from '@/lib/hooks/store-cart';
 import { useStoreDrawer } from '@/lib/hooks/store-drawer';
 import { toast } from '@/lib/hooks/use-toast';
-import { OptionChoiceScheme, productOptionScheme } from '@/lib/schemes/product-option';
-import { ChoiceModel } from '@/lib/schemes/product-option-choice';
+import { ProductOptionScheme, productOptionScheme } from '@/lib/schemes/product-option';
+import { ProductOptionChoiceScheme } from '@/lib/schemes/product-option-choice';
 import { EachElement, totalPrice } from '@/lib/utils';
 import DrawerOption from '@/modules/components/ui/drawer-option';
 import { MinusIcon, PlusIcon } from 'lucide-react';
@@ -16,17 +16,17 @@ import RadioGroupChoice from './components/radio-group-choice';
 export interface CheckProps {
     pick: boolean;
     optionName: string;
-    choices: ChoiceModel[];
-    defaultValue: OptionChoiceScheme;
+    choices: ProductOptionChoiceScheme[];
+    defaultValue: ProductOptionScheme;
     lengthSelect: number;
-    onChange: (checked: boolean, choice: ChoiceModel) => void;
+    onChange: (checked: boolean, choice: ProductOptionChoiceScheme) => void;
 }
 
 const StoreDrawer = () => {
     const { open, setOpen, product, clearState } = useStoreDrawer();
     const { addToCart, getCart } = useStoreCart();
 
-    const [optionChoice, setOptionChoice] = useState<OptionChoiceScheme[]>([]);
+    const [optionChoice, setOptionChoice] = useState<ProductOptionScheme[]>([]);
     const [qty, setQty] = useState(getCart(product?.id!)?.quantity ?? 1);
     const handleClose = () => {
         setOpen(false);
@@ -56,8 +56,8 @@ const StoreDrawer = () => {
     return (
         product && (
             <DrawerOption
-                title={product?.nameTH!}
-                imageUri={product?.productImages[0].source!}
+                title={product?.nameTH}
+                imageUri={product?.productImages[0].source}
                 onClose={handleClose}
                 open={open} >
                 <div className="flex flex-col gap-2 mb-2  bg-white p-3">
@@ -67,11 +67,6 @@ const StoreDrawer = () => {
                             <p className="font-bold text-sm">{product?.price}</p>
                         </div>
                     </div>
-                    {/* <div className="flex flex-row gap-2">
-                        <Tag size={12} className='text-primary' />
-                        <span className='text-xs'>฿127 off</span>
-                        <span className='text-gray-300 ml-auto text-xs'>Base price</span>
-                    </div> */}
                     <p className="product-description text-xs md:text-sm text-gray-400">
                         {product?.descriptionTH || "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam nulla veniam cupiditate perferendis molestiae id beatae qui rem? Soluta, id?"}
                     </p>
@@ -90,15 +85,15 @@ const StoreDrawer = () => {
                                     onChange={(checked, choice) => {
                                         const currentChoice = optionChoice.find(e => e.id === option.id)?.choices || [];
                                         const updatedValue = checked
-                                            ? [...currentChoice!, choice]
+                                            ? [...currentChoice, choice]
                                             : currentChoice?.filter(e => e.id !== choice.id);
                                         console.log({ updatedValue });
                                         if (!updatedValue.length) {
-                                            setOptionChoice(prv => prv.filter(e => e.id !== option.id));
+                                            setOptionChoice(prv => prv.filter((e) => e.id !== option.id));
                                             return;
                                         }
                                         setOptionChoice(prv => {
-                                            const o: OptionChoiceScheme = { ...option, choices: updatedValue };
+                                            const o: ProductOptionScheme = { ...option, choices: updatedValue };
                                             return [...prv.filter(e => e.optionName !== option.optionName), o];
                                         });
                                     }}
@@ -148,14 +143,14 @@ const StoreDrawer = () => {
                                     size="icon"
                                     className="h-8 w-8 shrink-0 rounded-full"
                                     onClick={() => setQty(prv => prv + 1)}
-                                    disabled={qty >= product.stock.quantity!}
+                                    disabled={qty >= product.stock.quantity}
                                 >
                                     <PlusIcon className="h-4 w-4" />
                                     <span className="sr-only">Increase</span>
                                 </Button>
                             </div>
                         </div>
-                        <Button onClick={handleAdd}>Add to cart - {totalPrice(product.price , optionChoice) * qty}</Button>
+                        <Button onClick={handleAdd}>Add to cart - {totalPrice(product.price, optionChoice) * qty}</Button>
                         <DrawerClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DrawerClose>

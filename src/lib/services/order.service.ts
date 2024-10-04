@@ -1,14 +1,21 @@
 "use server";
 
+import { AxiosError } from "axios";
 import { ApiRouter } from "../constant";
 import { axiosInstance, report } from "../utils";
-
+import { Order } from "../typing/order";
+export interface OrderItem {
+    productId: string;
+    quantity: number;
+    options: {
+        id: string;
+        choices: string[]
+    }[];
+}
 export interface OrderCreate {
     totalAmount: number;
-    orderItems: {
-        productId: string;
-        quantity: number;
-    }[];
+    orderStatus: "PENDING" | "CLOSE" | "DONE"
+    orderItems: OrderItem[];
 }
 export const createOrder = async (order: OrderCreate) => {
     try {
@@ -18,13 +25,17 @@ export const createOrder = async (order: OrderCreate) => {
             }
         });
     } catch (error) {
+        if (error instanceof AxiosError) {
+            console.log(error.response?.data)
+        }
         throw new Error(report(error));
     }
 };
 
-export const getOrders = async () => {
+export const getOrders = async (): Promise<Order[]> => {
     try {
-        const { data } = await axiosInstance().get(ApiRouter.ORDER);
+        const { data } = await axiosInstance().get<ApiResponse<Order[]>>(ApiRouter.ORDER);
+        return data.payload;
     } catch (error) {
         throw new Error(report(error));
     }

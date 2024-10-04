@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { choiceScheme } from "./product-option-choice";
+import { productOptionChoiceScheme } from "./product-option-choice";
 
 
 export const productOptionScheme = z.object({
@@ -8,14 +8,14 @@ export const productOptionScheme = z.object({
     oneMustBeChosen: z.boolean().default(false),
     manyCanBeChosen: z.boolean().default(false),
     lengthSelect: z.number(),
-    choices: z.array(choiceScheme)
+    choices: z.array(productOptionChoiceScheme)
 }).refine(e => {
-    if(!e.choices.length && e.oneMustBeChosen){
+    if (!e.choices.length && e.oneMustBeChosen) {
         return false;
     }
     return true;
 }, (e) => ({
     message: e.optionName + " is required",
-    path:["choices"]
+    path: ["choices"]
 }));
-export type OptionChoiceScheme = z.infer<typeof productOptionScheme>;
+export type ProductOptionScheme = z.infer<typeof productOptionScheme>;

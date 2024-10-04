@@ -1,7 +1,9 @@
 "use client";
 import { useStoreCart } from "@/lib/hooks/store-cart";
 import { toast } from "@/lib/hooks/use-toast";
-import { createOrder, OrderCreate } from "@/lib/services/order.service";
+import { ProductOptionScheme } from "@/lib/schemes/product-option";
+import { ProductOptionChoiceScheme } from "@/lib/schemes/product-option-choice";
+import { createOrder, OrderCreate, OrderItem } from "@/lib/services/order.service";
 import { cn, formatPrice, report, summary } from "@/lib/utils";
 import { Button } from "@/modules/components/ui/button";
 import { Separator } from "@/modules/components/ui/separator";
@@ -9,21 +11,32 @@ import { useRouter } from "next/navigation";
 import React, { useMemo } from "react";
 
 const CartSummary = () => {
-    const { cart: carts ,reset } = useStoreCart();
+    const { cart: carts, reset } = useStoreCart();
     const [loading, setLoading] = React.useState(false);
     const router = useRouter();
     const totalPrice = useMemo(() => {
         return carts && carts.length > 0 ? summary(carts) : 0;
     }, [carts]);
 
+    const getChoice = (choices: ProductOptionChoiceScheme[]): string[] => choices.map(e => e.id);
+    const getOption = (options: ProductOptionScheme[]): { id: string, choices: string[] }[] => options.map(po => ({
+        id: po.id,
+        choices: getChoice(po.choices)
+    }));
     const handleClick = async () => {
         setLoading(true);
+
+        const orderItems: OrderItem[] = carts.map(e => {
+            return ({
+                productId: e.id,
+                quantity: e.quantity,
+                options: getOption(e.productOptions)
+            })
+        })
         const toOrderCreate: OrderCreate = {
             totalAmount: totalPrice,
-            orderItems: carts.map(e => ({
-                productId: e.id,
-                quantity: e.quantity
-            }))
+            orderStatus: "PENDING",
+            orderItems: orderItems
         };
         try {
             await createOrder(toOrderCreate);

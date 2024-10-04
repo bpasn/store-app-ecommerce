@@ -1,10 +1,8 @@
-import { ChoiceModel } from "@/lib/schemes/product-option-choice";
 import { cn, EachElement } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { Checkbox } from "../../ui/checkbox";
 import { Label } from "../../ui/label";
 import { CheckProps } from "../store-drawer";
-import { toast } from "@/lib/hooks/use-toast";
 
 
 const CheckGroupChoice = ({
@@ -15,24 +13,6 @@ const CheckGroupChoice = ({
     lengthSelect,
     pick
 }: CheckProps) => {
-    const handleChange = (checked: boolean, choice: ChoiceModel) => {
-        if (checked && !isValueNull(defaultValue)) {
-            if (defaultValue.choices.length >= lengthSelect) {
-                toast({
-                    title: "WARNING",
-                    description: "Choice limit " + lengthSelect,
-                    variant: "default"
-                });
-                return;
-            }
-        }
-        const currentChoice = defaultValue && Array.isArray(defaultValue) ? defaultValue : [];
-        const updatedValue = checked
-            ? [...currentChoice, { id: choice.id, price: choice.price, name: choice.name }]
-            : currentChoice.filter(value => value.id !== choice.id);
-        // const o = { , choices: updatedValue };
-        // setChoice(prv => [...prv.filter(e => e.optionName !== o.optionName), o]);
-    };
     return (
         <div className="border p-4  flex flex-col gap-3 bg-white">
             <div className="flex flex-row items-center gap-2">
@@ -44,7 +24,7 @@ const CheckGroupChoice = ({
                     )}>
                         <Check size={12} strokeWidth={3} />
                     </div>
-                ): null}
+                ) : null}
             </div>
             <EachElement
                 of={choices}

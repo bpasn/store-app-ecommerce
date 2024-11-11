@@ -1,6 +1,11 @@
 import Aside from "@/modules/layout/nav/components/aside";
 
-const ProductLayout = ({ children }: { children: React.ReactNode; }) => {
+const ProductLayout = async (
+    { children
+
+    }: Readonly<{
+        children: React.ReactNode;
+    }>) => {
     return (
         <main className="flex-1 bg-gray-100">
             <div className="border-b">
@@ -11,7 +16,6 @@ const ProductLayout = ({ children }: { children: React.ReactNode; }) => {
                     {children}
                 </div>
             </div>
-            {/* <ModalProvider /> */}
         </main>
     );
 };

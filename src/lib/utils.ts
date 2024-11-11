@@ -1,8 +1,8 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError, isAxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { Children } from "react";
 import { twMerge } from "tailwind-merge";
-import { OptionChoiceScheme } from "./schemes/product-option";
+import { ProductOptionScheme } from "./schemes/product-option";
 import { CartStore } from "./hooks/store-cart";
 
 export function cn(...inputs: ClassValue[]) {
@@ -15,7 +15,11 @@ export const EachElement = <T>({ of, render }: { of: T[]; render: (item: T, inde
 
 export const report = (error: any) => {
   if (error instanceof AxiosError) {
-    return error.response?.data.message;
+    console.log("AXIOS ERROR : "+error.response?.data)
+    if (error.response && error.response.data) {
+      console.log("RETURN AXIOS ERROR")
+      return error.response.data.message;
+    }
   }
   if (error instanceof Error) {
     return error.message;
@@ -24,22 +28,10 @@ export const report = (error: any) => {
 };
 
 
-export const axiosInstance = () => {
-  const instance = axios.create({
-    baseURL: process.env.API_URI,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-      "x-api-key": process.env.X_API_KEY
-    }
-  });
-  return instance;
-};
-
-export const delay = async (duration: number) => new Promise(resolve => setTimeout(resolve, duration));
+export const delay = async (duration: number) => new Promise(resolve => setTimeout(resolve, duration * 1000));
 
 
-export const totalPrice = (price: number, option: OptionChoiceScheme[]) => {
+export const totalPrice = (price: number, option: ProductOptionScheme[]) => {
   const total = price + option.reduce((prv, cur) => {
     return (prv + cur.choices.reduce((p, c) => p + c.price, 0));
   }, 0);

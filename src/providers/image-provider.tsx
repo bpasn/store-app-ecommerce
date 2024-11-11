@@ -1,3 +1,4 @@
+'use client';
 import Image from "next/image";
 import NoImage from '@/assets/image/no-image.jpg';
 import React from "react";
@@ -8,6 +9,7 @@ const ImageProvider = ({
     ...props
 }: Omit<React.ComponentPropsWithRef<typeof Image>, "alt">) => {
     const [image, setImage] = React.useState<string | StaticImport>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + src);
+    console.log({image})
     return (
         <Image
             src={image}

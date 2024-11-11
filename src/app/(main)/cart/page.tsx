@@ -1,8 +1,13 @@
 import CartSummary from "@/modules/cart/cart-summary";
 import CartTable from "@/modules/cart/cart-table";
 import { Separator } from "@/modules/components/ui/separator";
+import { Metadata } from "next";
 
-const CartPage = async () => {
+export const metadata: Metadata = {
+    title: "Cart",
+    description: "Store E-commerce"
+};
+const CartPage = () => {
     return (
         <main className="flex-1 bg-gray-100">
             <div className="border-b">

@@ -1,45 +1,36 @@
 "use client";
 
 import { Order } from "@/lib/typing/order";
-import { X } from "lucide-react";
-import Link from "next/link";
-import OrderDetails from "../components/order-detail";
-import Items from "../components/items";
-import ShippingDetails from "../components/shipping-detail";
-import Help from "../components/help";
-import OrderSummary from "../components/order-summary";
+import { EachElement } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 interface OrderTemplateProps {
-    orders: Order[]
+  orders: Order[]
 }
 const OrderTemplate = ({ orders }: OrderTemplateProps) => {
-    console.log(orders)
-    return (
-        <div>
-            <div className="flex flex-col justify-center gap-y-4">
-      <div className="flex gap-2 justify-between items-center">
-        <h1 className="text-2xl-semi">Order details</h1>
-        <Link
-          href="/account/orders"
-          className="flex gap-2 items-center text-ui-fg-subtle hover:text-ui-fg-base"
-          data-testid="back-to-overview-button"
-        >
-          <X /> Back to overview
-        </Link>
-      </div>
-      <div
-        className="flex flex-col gap-4 h-full bg-white w-full"
-        data-testid="order-details-container"
-      >
-        <OrderDetails orders={orders} showStatus />
-        <Items />
-        <ShippingDetails />
-        <OrderSummary />
-        <Help />
-      </div>
+  const navigate = useRouter();
+  const handleClick = (id:string) => {
+    navigate.push(`/order/${id}`);
+  }
+  return (
+    <div className="flex flex-col gap-5">
+      <h1 className="text-2xl font-bold">Orders</h1>
+      <EachElement
+        of={orders}
+        render={(item) => {
+          return (
+            <div className="border rounded-md flex flex-col gap-3 p-5 cursor-pointer hover:bg-gray-50" onClick={() => handleClick(item.id)}>
+              <p>Order id : {item.id}</p>
+              <p>Created at : {new Date(item.createdAt).toDateString()}</p>
+              <p>Payment status : {item.orderStatus}</p>
+              <p>Total : {item.totalAmount.toFixed(2)}</p>
+            </div>
+          )
+        }} 
+      />
     </div>
-        </div>
-    );
+  );
 }
 
 export default OrderTemplate;

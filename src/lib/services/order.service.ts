@@ -2,8 +2,9 @@
 
 import { AxiosError } from "axios";
 import { ApiRouter } from "../constant";
-import { axiosInstance, report } from "../utils";
+import { report } from "../utils";
 import { Order } from "../typing/order";
+import { axiosInstance } from "../utils/axios-instance";
 export interface OrderItem {
     productId: string;
     quantity: number;
@@ -19,14 +20,16 @@ export interface OrderCreate {
 }
 export const createOrder = async (order: OrderCreate) => {
     try {
-        await axiosInstance().post(ApiRouter.ORDER, order, {
+        await axiosInstance.post(ApiRouter.ORDER, order, {
             headers: {
                 "Content-Type": "application/json"
             }
         });
     } catch (error) {
         if (error instanceof AxiosError) {
-            console.log(error.response?.data)
+            if (error.response?.data) {
+                throw new Error(error.response.data.message);
+            }
         }
         throw new Error(report(error));
     }
@@ -34,7 +37,17 @@ export const createOrder = async (order: OrderCreate) => {
 
 export const getOrders = async (): Promise<Order[]> => {
     try {
-        const { data } = await axiosInstance().get<ApiResponse<Order[]>>(ApiRouter.ORDER);
+        const { data } = await axiosInstance.get<ApiResponse<Order[]>>(ApiRouter.ORDER);
+        console.log({ data })
+        return data.payload;
+    } catch (error) {
+        throw new Error(report(error));
+    }
+}
+
+export const getOrderById = async (id: string) => {
+    try {
+        const { data } = await axiosInstance.get<ApiResponse<Order>>(ApiRouter.ORDER + `/${id}`);
         return data.payload;
     } catch (error) {
         throw new Error(report(error));

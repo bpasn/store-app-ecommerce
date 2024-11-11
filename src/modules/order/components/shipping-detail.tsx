@@ -1,9 +1,13 @@
 import { Separator } from '@/modules/components/ui/separator'
 import React from 'react'
 
-type Props = {}
+type Props = {
+    address: any
+}
 
-const ShippingDetails = (props: Props) => {
+const ShippingDetails = ({
+    address
+}: Props) => {
     return (
         <div>
             <h1  className="flex flex-row text-3xl-regular my-6">

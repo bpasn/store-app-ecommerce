@@ -1,5 +1,5 @@
 export const ApiRouter = {
-    PRODUCT: "/products",
+    PRODUCT: "/product",
     CATEGORIES:"/categories",
     ORDER:"/order",
 } as const;

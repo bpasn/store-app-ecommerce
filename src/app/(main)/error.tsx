@@ -1,9 +1,6 @@
-'use client'; // Error boundaries must be Client Components
-
+"use client"
 import { Button } from '@/modules/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/modules/components/ui/dialog';
-import { AxiosError } from 'axios';
-import { useEffect } from 'react';
 
 export default function Error({
     error,
@@ -12,21 +9,7 @@ export default function Error({
     error: any & { digest?: string; };
     reset: () => void;
 }) {
-    // const { open, openModal, closeModal } = useStoreModal();
-    useEffect(() => {
-        // if (!open) {
-        //     openModal((
-        //         <div className='flex flex-col'>
-        //             {error.message}
-        //             <Button onClick={() => {
-        //                 reset();
-        //                 closeModal()
-        //             }}>OK</Button>
-        //         </div>
-        //     ), error.name)
-        // }
-    }, [error]);
-
+    console.log(error.digest)
     return (
         <Dialog open>
             <DialogContent>

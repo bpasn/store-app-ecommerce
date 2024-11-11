@@ -2,7 +2,7 @@ import { create, StateCreator } from "zustand";
 import { devtools, persist } from 'zustand/middleware';
 import { toast } from "./use-toast";
 import { ProductModel, ProductWithoutCategory } from "../schemes/product";
-import { OptionChoiceScheme } from "../schemes/product-option";
+import { ProductOptionScheme } from "../schemes/product-option";
 import { getDrawerState } from "./store-drawer";
 
 export interface CartStore extends ProductWithoutCategory {

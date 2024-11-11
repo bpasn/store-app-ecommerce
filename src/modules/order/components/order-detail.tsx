@@ -3,10 +3,10 @@ import React from "react";
 
 interface OrderDetailsProps {
     showStatus?: boolean;
-    orders: Order[]
+    order: Order
 }
 const OrderDetails = ({
-    orders,
+    order,
     showStatus
 }: OrderDetailsProps) => {
     return (
@@ -19,27 +19,27 @@ const OrderDetails = ({
                 .
             </h1>
             <h2 className="mt-2">
-                {/* Order date: <span data-testid="order-date">{new Date(order.created_at).toDateString()}</span> */}
+                Order date: <span data-testid="order-date">{new Date(order.createdAt).toDateString()}</span>
             </h2>
             <h3 className="mt-2 text-ui-fg-interactive">
-                {/* Order number: <span data-testid="order-id">{order.display_id}</span> */}
+                Order number: <span data-testid="order-id">{order.id}</span>
             </h3>
 
             <div className="flex items-center text-compact-small gap-x-4 mt-4">
                 {showStatus && (
                     <React.Fragment>
                         <h1>
-                            Order status:{" "}
+                            Order status: {order.orderStatus}
                             <span className="text-ui-fg-subtle " data-testid="order-status">
                                 {/* {formatStatus(order.fulfillment_status)} */}
                             </span>
                         </h1>
-                        <h1>
+                        {/* <h1>
                             Payment status:{" "}
                             <span className="text-ui-fg-subtle">
-                                {/* {formatStatus(order.payment_status)} */}
+                                {formatStatus(order.payment_status)}
                             </span>
-                        </h1>
+                        </h1> */}
                     </React.Fragment>
                 )}
             </div>

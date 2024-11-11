@@ -18,7 +18,7 @@ const ProductPage = async () => {
   const categoriesWithProduct = await getProduct();
   return (
     <main className='relative py-6  '>
-      <div className="!max-w-[70%] bg-white">
+      <div className="lg:!max-w-[70%] bg-white">
         <div className='flex px-3 py-4 mb-3'>
           <div className="flex flex-row flex-1 gap-2 px-3">
             <div className="border flex-1 flex-row flex items-center border-primary rounded-md px-2 " >

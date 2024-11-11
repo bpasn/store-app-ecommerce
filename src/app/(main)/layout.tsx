@@ -1,19 +1,16 @@
-import { Toaster } from '@/modules/components/ui/toaster';
+export const dynamic = "force-dynamic";
 import Footer from '@/modules/layout/footer';
 import Nav from '@/modules/layout/nav';
-import Aside from '@/modules/layout/nav/components/aside';
-import DrawerProvider from '@/providers/drawer-provider';
 import React from 'react';
 
 
-const layout = ({
+const layout = async ({
     children
-}: {
+}: Readonly<{
     children: React.ReactNode;
-}) => {
+}>) => {
     return (
         <div className='relative flex min-h-screen flex-col bg-background'>
-            {/* <SideBar /> */}
             <Nav />
             {children}
             <Footer />
